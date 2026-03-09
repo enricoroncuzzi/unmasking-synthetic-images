@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Dataset e modelli (troppo grandi per GitHub)
+DATASET_*/
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+
+# Secrets
+.env
+*.pem
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Experiments
+experiments/
+mlruns/
+wandb/

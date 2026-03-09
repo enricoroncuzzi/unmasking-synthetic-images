@@ -1,0 +1,23 @@
+# Core ML
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Diffusion models
+diffusers==0.31.0
+transformers==4.45.0
+accelerate>=0.20.0
+safetensors>=0.3.0
+
+# HuggingFace
+huggingface_hub>=0.20.0
+
+# Image processing
+Pillow>=9.0.0
+
+# SD3.5 / FLUX tokenizers
+sentencepiece
+protobuf
+
+# Utilities
+tqdm>=4.60.0
+numpy>=1.24.0
