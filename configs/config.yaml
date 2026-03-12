@@ -1,0 +1,32 @@
+# Default configuration for expert training
+# Override with: python training/train_expert.py expert=sd15
+
+defaults:
+  - _self_
+  - expert: sd15  # default expert (override with expert=sd21, expert=flux, etc.)
+
+# Paths
+dataset_root: dataset
+manifests_dir: manifests
+
+# Training
+training:
+  epochs: 100
+  batch_size: 16
+  lr: 1.0e-4
+  scheduler: reduce_on_plateau
+  lr_patience: 5
+  es_patience: 20
+  seed: 42
+
+# Data
+data:
+  patch_size: 256
+  num_patches: 5
+  num_workers: 4
+  aug_prob: 0.7
+  min_downscaling: 0.8
+
+# Model
+model:
+  num_classes: 2

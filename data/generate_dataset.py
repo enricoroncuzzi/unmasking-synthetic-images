@@ -36,8 +36,6 @@ import torch
 from PIL import Image
 from huggingface_hub import login, snapshot_download
 
-# ── Constants ─────────────────────────────────────────────────────────────────
-
 REAL_DIR = Path("DATASET_IMGREAL")
 MAPPING_PATH = Path("file_mappings.json")
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
@@ -79,8 +77,6 @@ MODEL_CONFIGS = {
         "resolution": 768,
     },
 }
-
-# ── Pipeline loaders ───────────────────────────────────────────────────────────
 
 def load_sd15():
     from diffusers import StableDiffusionImg2ImgPipeline
@@ -155,8 +151,6 @@ LOADERS = {
     "flux": load_flux,
 }
 
-# ── Inference ──────────────────────────────────────────────────────────────────
-
 def launder_batch(pipe, imgs: list, model_name: str, resolution: int) -> list:
     """
     Apply laundering pass to a batch of images.
@@ -178,8 +172,6 @@ def launder_batch(pipe, imgs: list, model_name: str, resolution: int) -> list:
         kwargs["num_inference_steps"] = 4
         kwargs["guidance_scale"] = 0.0
     return pipe(**kwargs).images
-
-# ── Utilities ──────────────────────────────────────────────────────────────────
 
 def device() -> str:
     return "cuda" if torch.cuda.is_available() else "cpu"
@@ -211,8 +203,6 @@ def chunked(lst: list, n: int):
     """Yield successive n-sized chunks from lst."""
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
-
-# ── Main loop ──────────────────────────────────────────────────────────────────
 
 def run_laundering(model_name: str, batch_size: int = DEFAULT_BATCH_SIZE, dry_run: bool = False):
     config = MODEL_CONFIGS[model_name]
@@ -272,8 +262,6 @@ def run_laundering(model_name: str, batch_size: int = DEFAULT_BATCH_SIZE, dry_ru
     save_mappings(mappings)
     free_memory(pipe)
     print(f"Done. Laundered images saved to '{out_dir}'.")
-
-# ── Entry point ────────────────────────────────────────────────────────────────
 
 def parse_args():
     parser = argparse.ArgumentParser(

@@ -9,6 +9,8 @@ venv/
 
 # Dataset e modelli (troppo grandi per GitHub)
 DATASET_*/
+dataset/
+manifests/
 *.pth
 *.ckpt
 *.safetensors
@@ -28,3 +30,6 @@ DATASET_*/
 experiments/
 mlruns/
 wandb/
+checkpoints/
+outputs/
+experiments/
