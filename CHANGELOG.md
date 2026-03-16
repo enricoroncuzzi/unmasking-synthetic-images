@@ -19,7 +19,7 @@
 - `models/expert.py`: ResNet50 binary classifier with embedding extraction
 - `training/train_expert.py`: PyTorch Lightning training script with Hydra + MLflow
 - `configs/`: Hydra config files for all 5 experts and global training parameters
-- `train_all_experts.sh`: sequential training script for all 5 experts
+- `scripts/train_all_experts.sh`: sequential training script for all 5 experts
 
 ### Results
 - Trained 5 ResNet50 expert classifiers on RTX 4000 Ada (RunPod)

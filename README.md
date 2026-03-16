@@ -28,7 +28,7 @@ python data/download_dataset.py --token YOUR_HF_TOKEN --workers 1
 python data/prepare_manifests.py
 
 # Train all 5 experts sequentially
-bash train_all_experts.sh
+bash scripts/train_all_experts.sh
 ```
 
 ## Architecture
@@ -39,6 +39,11 @@ bash train_all_experts.sh
 ## Stack
 
 PyTorch · PyTorch Lightning · Hydra · MLflow · Albumentations · HuggingFace · AWS EC2 · RunPod
+
+## Articles
+
+- [Building a Forensic AI Dataset Across 5 Stable Diffusion Variants (Phase 1)](https://medium.com/@enricoroncuzzi/part-1-building-a-forensic-ai-dataset-across-5-stable-diffusion-variants-sd1-5-to-flux-dfd39f5b50d1)
+- [Training Five Specialized Detectors on a Forensic Image Dataset (Phase 2)](https://medium.com/@enricoroncuzzi/phase-2-training-five-specialized-detectors-on-a-forensic-image-dataset-267f59841940)
 
 ## Roadmap
 
