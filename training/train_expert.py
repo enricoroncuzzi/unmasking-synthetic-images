@@ -158,6 +158,9 @@ def main(cfg: DictConfig):
         patience=cfg.training.es_patience,
     )
 
+    # Enable Tensor Core optimization on NVIDIA GPUs
+    torch.set_float32_matmul_precision('medium')
+
     # Trainer
     trainer = pl.Trainer(
         max_epochs=cfg.training.epochs,

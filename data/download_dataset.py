@@ -40,8 +40,8 @@ def main():
     parser.add_argument(
         "--workers",
         type=int,
-        default=2,
-        help="Parallel download workers (default: 2, increase on fast connections)",
+        default=1,
+        help="Parallel download workers (default: 1, HuggingFace free tier rate limit: 1000 req/5min across 6000 files)",
     )
 
     args = parser.parse_args()
