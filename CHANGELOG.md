@@ -49,3 +49,10 @@
 | embedding | 0.9648  | 0.0954   | 43         |
 | image     | 0.7472  | 0.8310   | 18         |
 | attention | 0.7314  | 0.9552   | 97         |
+
+## [0.3.1] - 2026-03-26
+
+### Changed
+- Reorganized checkpoint directory structure: expert checkpoints moved from `checkpoints/<name>/` to `checkpoints/experts/<name>/`
+- Updated `models/moe.py` (`resolve_checkpoint_paths`, docstrings) to reflect new path layout
+- Mirrored reorganization on HuggingFace model repo (`enricoroncuzzi/unmasking-synthetic-images-models`): expert folders now live under `experts/`, gating under `moe/`

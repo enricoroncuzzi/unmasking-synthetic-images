@@ -12,11 +12,11 @@ Usage:
 
     model = MoEModel(
         checkpoint_paths={
-            "sd15":      "checkpoints/sd15/best-epoch=30-....ckpt",
-            "sd21":      "checkpoints/sd21/best-epoch=49-....ckpt",
-            "sdxl_base": "checkpoints/sdxl_base/best-epoch=20-....ckpt",
-            "sd35":      "checkpoints/sd35/best-epoch=46-....ckpt",
-            "flux":      "checkpoints/flux/best-epoch=86-....ckpt",
+            "sd15":      "checkpoints/experts/sd15/best-epoch=30-....ckpt",
+            "sd21":      "checkpoints/experts/sd21/best-epoch=49-....ckpt",
+            "sdxl_base": "checkpoints/experts/sdxlbase/best-epoch=20-....ckpt",
+            "sd35":      "checkpoints/experts/sd35/best-epoch=46-....ckpt",
+            "flux":      "checkpoints/experts/flux/best-epoch=86-....ckpt",
         },
         gating_strategy="embedding",   # "logit" | "embedding" | "image" | "attention"
     )
@@ -43,7 +43,7 @@ def _resolve_checkpoint(ckpt_path: str) -> str:
     """
     Resolves a checkpoint path that may contain a glob wildcard.
 
-    Allows configs to specify  checkpoints/sd15/best-*.ckpt  instead
+    Allows configs to specify  checkpoints/experts/sd15/best-*.ckpt  instead
     of the full timestamped filename, which changes between runs.
 
     Args:
@@ -240,11 +240,12 @@ def resolve_checkpoint_paths(checkpoints_dir: str) -> dict[str, str]:
 
     Expected directory structure (produced by Phase 2 training):
         checkpoints/
-            sd15/best-*.ckpt
-            sd21/best-*.ckpt
-            sdxl_base/best-*.ckpt
-            sd35/best-*.ckpt
-            flux/best-*.ckpt
+            experts/
+                sd15/best-*.ckpt
+                sd21/best-*.ckpt
+                sdxlbase/best-*.ckpt
+                sd35/best-*.ckpt
+                flux/best-*.ckpt
 
     Args:
         checkpoints_dir : path to the checkpoints/ root directory
@@ -255,6 +256,6 @@ def resolve_checkpoint_paths(checkpoints_dir: str) -> dict[str, str]:
     """
     paths = {}
     for name in EXPERT_NAMES:
-        pattern = os.path.join(checkpoints_dir, name, "best-*.ckpt")
+        pattern = os.path.join(checkpoints_dir, "experts", name, "best-*.ckpt")
         paths[name] = pattern
     return paths

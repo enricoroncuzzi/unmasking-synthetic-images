@@ -43,6 +43,9 @@ bash scripts/train_all_experts.sh
 
 # Train all 4 MoE gating strategies sequentially (requires expert checkpoints)
 bash scripts/train_all_moe.sh
+
+# Expert checkpoints are expected at checkpoints/experts/<name>/best-*.ckpt
+# MoE gating checkpoints are saved under checkpoints/moe/<strategy>/
 ```
 
 ## Architecture
