@@ -1,0 +1,31 @@
+# Default configuration for MoE gating network training
+# Override with: python training/train_moe.py moe=embedding
+# See profiling.py for optimal setup
+
+defaults:
+  - _self_
+  - moe: logit  # default strategy (override with moe=embedding, moe=image, moe=attention)
+
+# Paths
+dataset_root: dataset
+manifests_dir: manifests
+checkpoints_dir: checkpoints
+
+training:
+  epochs: 100
+  batch_size: 512
+  lr: 1.0e-4
+  scheduler: reduce_on_plateau
+  lr_patience: 5
+  es_patience: 20
+  seed: 42
+  deterministic: false  # true only for debugging/ablations (slower)
+  precision: bf16-mixed  # bf16-mixed | 16-mixed | 32
+
+
+data:
+  patch_size: 256
+  num_patches: 5
+  num_workers: 24
+  aug_prob: 0.7
+  min_downscaling: 0.8

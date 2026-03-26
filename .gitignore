@@ -33,3 +33,7 @@ wandb/
 checkpoints/
 outputs/
 experiments/
+
+dio.py
+notes/
+logs/

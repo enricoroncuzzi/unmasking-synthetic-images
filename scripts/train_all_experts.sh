@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 EXPERTS=("sd15" "sd21" "sdxl_base" "sd35" "flux")
 
