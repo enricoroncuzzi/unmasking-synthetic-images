@@ -35,3 +35,12 @@ omegaconf>=2.2.0
 
 # Experiment tracking
 mlflow>=2.0.0
+
+# Visualization
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Evaluation (Phase 4)
+scikit-learn>=1.3
+grad-cam>=1.4
+umap-learn>=0.5

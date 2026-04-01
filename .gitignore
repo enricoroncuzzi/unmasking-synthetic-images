@@ -34,6 +34,5 @@ checkpoints/
 outputs/
 experiments/
 
-dio.py
-notes/
+obsidian/
 logs/
