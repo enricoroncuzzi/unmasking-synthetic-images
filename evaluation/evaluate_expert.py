@@ -308,8 +308,7 @@ def main() -> None:
         json.dump(serialisable, f, indent=2)
     print(f"  Saved: {json_path}")
 
-    print("\nT8 complete.\n")
-
+    print("\nTest complete.\n")
 
 if __name__ == "__main__":
     main()

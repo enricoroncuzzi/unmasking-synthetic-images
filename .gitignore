@@ -8,7 +8,6 @@ build/
 venv/
 
 # Dataset e modelli (troppo grandi per GitHub)
-DATASET_*/
 dataset/
 manifests/
 *.pth
@@ -27,12 +26,12 @@ manifests/
 .DS_Store
 
 # Experiments
+assets/
 experiments/
 mlruns/
 wandb/
 checkpoints/
 outputs/
 experiments/
-
 obsidian/
 logs/
