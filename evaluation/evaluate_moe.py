@@ -324,36 +324,45 @@ def plot_ba_comparison(
     output_dir: str,
 ) -> None:
     """
-    Plot 3: bar chart comparing in-distribution BA of each expert
-    against overall BA of each MoE strategy.
-    """
-    names = []
-    ba_values = []
-    colors = []
+    Plot 3: bar chart comparing cross-distribution average BA of each expert
+    against overall BA of each MoE strategy on the merged test set.
 
-    # Expert in-distribution BAs from T8 JSON
+    Using cross-distribution BA for experts (mean over all off-diagonal cells)
+    puts both axes on the same footing: experts evaluated on unseen variants,
+    MoE evaluated on the full merged set. This is the fair comparison that
+    motivates the MoE architecture.
+    """
+    from matplotlib.patches import Patch
+
+    names      = []
+    ba_values  = []
+    colors     = []
+
     if os.path.exists(expert_results_path):
         with open(expert_results_path) as f:
             expert_results = json.load(f)
         for name in EXPERT_NAMES:
-            ba = expert_results[name][name]["ba"]
+            # Mean BA across all OTHER variants (off-diagonal of cross-dist matrix)
+            cross_bas = [
+                expert_results[name][variant]["ba"]
+                for variant in EXPERT_NAMES
+                if variant != name
+            ]
+            ba = float(np.mean(cross_bas))
             names.append(name.upper())
             ba_values.append(ba)
-            colors.append("#4C72B0")   # blue for experts
+            colors.append("#4C72B0")
     else:
-        print(f"  [WARN] expert_results.json not found — skipping expert bars")
+        print("  [WARN] expert_results.json not found — skipping expert bars")
 
-    # MoE strategy BAs
     for strategy in MOE_STRATEGIES:
-        ba = results[strategy]["ba"]
         names.append(f"MoE-{strategy.capitalize()}")
-        ba_values.append(ba)
-        colors.append("#DD8452")       # orange for MoE
+        ba_values.append(results[strategy]["ba"])
+        colors.append("#DD8452")
 
     fig, ax = plt.subplots(figsize=(11, 6))
     bars = ax.bar(names, ba_values, color=colors, edgecolor="white", width=0.6)
 
-    # Annotate bars
     for bar, val in zip(bars, ba_values):
         ax.text(
             bar.get_x() + bar.get_width() / 2,
@@ -365,17 +374,18 @@ def plot_ba_comparison(
             fontweight="bold",
         )
 
-    ax.axhline(90, color="gray", linestyle="--", lw=1.2, label="90% threshold")
+    ax.axhline(90, color="gray", linestyle="--", lw=1.2)
     ax.set_ylim(40, 105)
     ax.set_ylabel("Balanced Accuracy (%)", fontsize=12)
-    ax.set_title("Balanced Accuracy: Individual Experts vs MoE Strategies", fontsize=13)
+    ax.set_title(
+        "Balanced Accuracy: Expert Cross-Distribution Average vs MoE on Merged Test Set",
+        fontsize=12,
+    )
     ax.tick_params(axis="x", rotation=20)
 
-    # Legend
-    from matplotlib.patches import Patch
     legend_handles = [
-        Patch(facecolor="#4C72B0", label="Expert (in-distribution)"),
-        Patch(facecolor="#DD8452", label="MoE (merged test set)"),
+        Patch(facecolor="#4C72B0", label="Expert (avg cross-distribution BA)"),
+        Patch(facecolor="#DD8452", label="MoE (merged test set BA)"),
     ]
     ax.legend(handles=legend_handles, fontsize=10)
     sns.despine()
@@ -417,7 +427,7 @@ def main() -> None:
     os.makedirs(args.output_dir, exist_ok=True)
 
     print(f"\n{'='*60}")
-    print(f"  MoE Evaluation — T9")
+    print(f"  MoE Evaluation ")
     print(f"  device        : {device}")
     print(f"  dataset_root  : {args.dataset_root}")
     print(f"  manifests_dir : {args.manifests_dir}")
