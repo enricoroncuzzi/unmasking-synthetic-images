@@ -250,7 +250,7 @@ def main() -> None:
     os.makedirs(args.output_dir, exist_ok=True)
 
     print(f"\n{'='*60}")
-    print(f"  Grad-CAM Visualization — T10")
+    print(f"  Grad-CAM Visualization ")
     print(f"  device      : {device}")
     print(f"  num_images  : {args.num_images} real + {args.num_images} synthetic per expert")
     print(f"{'='*60}\n")
