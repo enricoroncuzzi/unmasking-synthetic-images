@@ -92,8 +92,7 @@ def generate_gradcam_overlays(
         label           : 0=real, 1=synthetic
     """
     target_layers = [expert.backbone.layer4[-1]]
-    # Use the backbone directly — Grad-CAM needs the model that produces
-    # the feature maps at the target layer
+    # GradCAM hooks into the target layer; model must produce the final logits
     cam = GradCAM(model=expert, target_layers=target_layers)
     targets = [ClassifierOutputTarget(1)]   # always target synthetic class
 
@@ -289,8 +288,7 @@ def main() -> None:
     print("\nGenerating summary plot...")
     plot_gradcam_summary(all_overlays, args.output_dir)
 
-    print("\nT10 complete.\n")
-
+    print("\nTest complete.\n")
 
 if __name__ == "__main__":
     main()

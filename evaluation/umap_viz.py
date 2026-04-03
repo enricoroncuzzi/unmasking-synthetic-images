@@ -225,9 +225,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch_size",  type=int, default=64)
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument(
-        "--cross_expert", default="sd15",
+        "--cross_expert", default="sd35",
         choices=EXPERT_NAMES,
-        help="Which expert to use for the cross-distribution UMAP (default: sd15)",
+        help="Which expert to use for the cross-distribution UMAP (default: sd35)",
     )
     parser.add_argument(
         "--n_neighbors", type=int, default=15,
@@ -365,7 +365,7 @@ def main() -> None:
         output_dir=args.output_dir,
     )
 
-    print("\nT11 complete.\n")
+    print("\nTest complete.\n")
 
 
 if __name__ == "__main__":
