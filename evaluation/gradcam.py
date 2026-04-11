@@ -7,8 +7,8 @@ Target class is always 1 (synthetic) — shows where the model detects
 'syntheticness', even on real images.
 
 Produces:
-    assets/gradcam_{variant}.png   — 2×3 grid per expert (5 files)
-    assets/gradcam_summary.png     — 2×5 summary (1 pair per expert, for README)
+    results/gradcam_{variant}.png   — 2×3 grid per expert (5 files)
+    results/gradcam_summary.png     — 2×5 summary (1 pair per expert, for README)
 
 Usage:
     python evaluation/gradcam.py
@@ -37,7 +37,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_DATASET_ROOT    = os.path.join(PROJECT_ROOT, "dataset")
 DEFAULT_MANIFESTS_DIR   = os.path.join(PROJECT_ROOT, "manifests")
 DEFAULT_CHECKPOINTS_DIR = os.path.join(PROJECT_ROOT, "checkpoints")
-DEFAULT_OUTPUT_DIR      = os.path.join(PROJECT_ROOT, "assets")
+DEFAULT_OUTPUT_DIR      = os.path.join(PROJECT_ROOT, "results")
 
 # ImageNet normalization (must match training transforms)
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)

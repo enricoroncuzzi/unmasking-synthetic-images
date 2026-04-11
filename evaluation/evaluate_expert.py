@@ -5,9 +5,9 @@ Evaluates each of the 5 ResNet50 experts both in-distribution (expert tested on
 its own SD variant) and cross-distribution (expert tested on all other variants).
 
 Produces:
-    assets/roc_experts_in_dist.png     — ROC curves overlay (in-distribution)
-    assets/cross_dist_heatmap.png      — 5×5 Balanced Accuracy heatmap
-    assets/expert_results.json         — full metrics dict for T12 aggregation
+    results/roc_experts_in_dist.png     — ROC curves overlay (in-distribution)
+    results/cross_dist_heatmap.png      — 5×5 Balanced Accuracy heatmap
+    results/expert_results.json         — full metrics dict for T12 aggregation
 
 Usage:
     python evaluation/evaluate_expert.py
@@ -50,7 +50,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_DATASET_ROOT = os.path.join(PROJECT_ROOT, "dataset")
 DEFAULT_MANIFESTS_DIR = os.path.join(PROJECT_ROOT, "manifests")
 DEFAULT_CHECKPOINTS_DIR = os.path.join(PROJECT_ROOT, "checkpoints")
-DEFAULT_OUTPUT_DIR = os.path.join(PROJECT_ROOT, "assets")
+DEFAULT_OUTPUT_DIR = os.path.join(PROJECT_ROOT, "results")
 
 
 # ── Core evaluation ───────────────────────────────────────────────────────────

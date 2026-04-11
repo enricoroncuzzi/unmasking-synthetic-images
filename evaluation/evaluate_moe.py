@@ -9,10 +9,10 @@ gating weights distribute across experts when the input belongs to a specific
 SD variant — revealing whether the gating correctly attributes the source.
 
 Produces:
-    assets/confusion_matrices_moe.png   — 2×2 confusion matrix grid
-    assets/alpha_heatmap.png            — alpha attribution per variant (4 subplots)
-    assets/ba_comparison.png            — bar chart: experts vs MoE strategies
-    assets/moe_results.json             — full metrics + alphas dict for T12
+    results/confusion_matrices_moe.png   — 2×2 confusion matrix grid
+    results/alpha_heatmap.png            — alpha attribution per variant (4 subplots)
+    results/ba_comparison.png            — bar chart: experts vs MoE strategies
+    results/moe_results.json             — full metrics + alphas dict for T12
 
 Usage:
     python evaluation/evaluate_moe.py
@@ -53,7 +53,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_DATASET_ROOT    = os.path.join(PROJECT_ROOT, "dataset")
 DEFAULT_MANIFESTS_DIR   = os.path.join(PROJECT_ROOT, "manifests")
 DEFAULT_CHECKPOINTS_DIR = os.path.join(PROJECT_ROOT, "checkpoints")
-DEFAULT_OUTPUT_DIR      = os.path.join(PROJECT_ROOT, "assets")
+DEFAULT_OUTPUT_DIR      = os.path.join(PROJECT_ROOT, "results")
 
 MOE_STRATEGIES = ["logit", "embedding", "image", "attention"]
 

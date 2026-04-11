@@ -13,8 +13,8 @@ them to 2D with UMAP. Produces two types of visualization:
     Shows how well one expert separates different generative sources.
 
 Produces:
-    assets/umap_experts_grid.png    — 1×5 scatter grid (one per expert)
-    assets/umap_cross_expert.png    — single scatter, 6 classes
+    results/umap_experts_grid.png    — 1×5 scatter grid (one per expert)
+    results/umap_cross_expert.png    — single scatter, 6 classes
 
 Usage:
     python evaluation/umap_viz.py
@@ -44,7 +44,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_DATASET_ROOT    = os.path.join(PROJECT_ROOT, "dataset")
 DEFAULT_MANIFESTS_DIR   = os.path.join(PROJECT_ROOT, "manifests")
 DEFAULT_CHECKPOINTS_DIR = os.path.join(PROJECT_ROOT, "checkpoints")
-DEFAULT_OUTPUT_DIR      = os.path.join(PROJECT_ROOT, "assets")
+DEFAULT_OUTPUT_DIR      = os.path.join(PROJECT_ROOT, "results")
 
 
 # ── Embedding extraction ──────────────────────────────────────────────────────

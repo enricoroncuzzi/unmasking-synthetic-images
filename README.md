@@ -68,7 +68,7 @@ Every expert is near-perfect on its own variant, near-random on all others. SD3.
 
 ### MoE vs individual experts — the generalization gap
 
-![Balanced Accuracy: Individual Experts vs MoE Strategies](assets/t9results/ba_comparison.png)
+![Balanced Accuracy: Individual Experts vs MoE Strategies](results/t9/ba_comparison.png)
 
 Individual experts average ~50–69% balanced accuracy outside their training distribution. All four MoE strategies exceed 90% BA on the same cross-distribution scenario — a **~40 percentage-point recovery** from the specialization failure.
 
@@ -85,7 +85,7 @@ Individual experts average ~50–69% balanced accuracy outside their training di
 
 ### Attribution — gating weight analysis
 
-![Alpha Attribution Heatmaps](assets/t9results/alpha_heatmap.png)
+![Alpha Attribution Heatmaps](results/t9/alpha_heatmap.png)
 
 MoE-Logit (leftmost) shows a clear diagonal: SD1.5 inputs route to the SD1.5 expert, SD2.1 to the SD2.1 expert, and so on. MoE-Embedding collapses to a two-expert routing strategy, trading attribution for +1% BA. Image and Attention strategies converge to the single most generalizing expert (SD3.5) regardless of input source.
 
@@ -95,13 +95,13 @@ MoE-Logit (leftmost) shows a clear diagonal: SD1.5 inputs route to the SD1.5 exp
 
 ### Grad-CAM — where experts detect synthetic artifacts
 
-![Grad-CAM Summary](assets/t10results/gradcam_summary.png)
+![Grad-CAM Summary](results/t10/gradcam_summary.png)
 
 Grad-CAM activations on `layer4[-1]` of each ResNet50 expert (target class: synthetic). Activations concentrate on facial regions where the VAE roundtrip at `strength=0.05` introduces sub-pixel statistical deviations — the primary carrier of forensic fingerprints in portrait images.
 
 ### UMAP — embedding space structure
 
-![UMAP Expert Embeddings](assets/t11results/umap_experts_grid.png)
+![UMAP Expert Embeddings](results/t11/umap_experts_grid.png)
 
 Each expert learns a well-separated 2D embedding space for its own variant (Real vs Synthetic clusters). When the most generalizing expert (SD3.5) is run on all 5 SD variants simultaneously, the six classes form a single mixed manifold — the expert can detect real vs synthetic, but cannot separate generative sources. This geometric confirmation explains why attribution requires the MoE routing mechanism.
 
@@ -145,10 +145,9 @@ models/          ExpertModel (ResNet50), MoEModel, 4 gating strategies
 training/        Lightning training scripts — train_expert.py, train_moe.py
 evaluation/      evaluate_expert.py, evaluate_moe.py, gradcam.py, umap_viz.py
 configs/         Hydra configs — expert × 5, moe × 4
-notebooks/       results_analysis.ipynb — full evaluation narrative
+results/         analysis.ipynb + evaluation plots per run (t8–t11)
 scripts/         train_all_experts.sh, train_all_moe.sh
 checkpoints/     experts/ + moe/ — best checkpoints per variant/strategy
-assets/          evaluation plots (ROC, confusion matrices, Grad-CAM, UMAP)
 ```
 
 Pretrained checkpoints: [enricoroncuzzi/unmasking-synthetic-images-models](https://huggingface.co/enricoroncuzzi/unmasking-synthetic-images-models)

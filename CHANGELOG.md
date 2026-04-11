@@ -53,11 +53,11 @@
 ## [0.4.0] - 2026-04-03
 
 ### Added
-- `evaluation/evaluate_expert.py`: test-set evaluation for all 5 expert classifiers — AUC, Balanced Accuracy, Precision, Recall, F1; full 5×5 cross-distribution matrix (every expert on every test variant); produces `assets/t8results/roc_experts_in_dist.png`, `cross_dist_heatmap.png`, `expert_results.json`
-- `evaluation/evaluate_moe.py`: test-set evaluation for all 4 MoE gating strategies — same metrics as experts; per-variant BA breakdown; alpha attribution matrix (mean gating weights per SD variant); produces `assets/t9results/confusion_matrices_moe.png`, `alpha_heatmap.png`, `ba_comparison.png`, `moe_results.json`
-- `evaluation/gradcam.py`: Grad-CAM visualization on `layer4[-1]` of each ResNet50 expert; target class always synthetic (class 1); per-expert 2×3 grids + summary 2×5 plot; produces `assets/t10results/gradcam_{variant}.png` × 5 + `gradcam_summary.png`
-- `evaluation/umap_viz.py`: UMAP 2D visualization of 2048-dim expert embeddings; per-expert in-distribution scatter (Real vs Synthetic) and cross-expert scatter (SD35 expert on all 5 variants, 6 classes); produces `assets/t11results/umap_experts_grid.png`, `umap_cross_expert.png`
-- `notebooks/results_analysis.ipynb`: full evaluation narrative — aggregates all Phase 4 plots with quantitative tables and key findings
+- `evaluation/evaluate_expert.py`: test-set evaluation for all 5 expert classifiers — AUC, Balanced Accuracy, Precision, Recall, F1; full 5×5 cross-distribution matrix (every expert on every test variant); produces `results/t8/roc_experts_in_dist.png`, `cross_dist_heatmap.png`, `expert_results.json`
+- `evaluation/evaluate_moe.py`: test-set evaluation for all 4 MoE gating strategies — same metrics as experts; per-variant BA breakdown; alpha attribution matrix (mean gating weights per SD variant); produces `results/t9/confusion_matrices_moe.png`, `alpha_heatmap.png`, `ba_comparison.png`, `moe_results.json`
+- `evaluation/gradcam.py`: Grad-CAM visualization on `layer4[-1]` of each ResNet50 expert; target class always synthetic (class 1); per-expert 2×3 grids + summary 2×5 plot; produces `results/t10/gradcam_{variant}.png` × 5 + `gradcam_summary.png`
+- `evaluation/umap_viz.py`: UMAP 2D visualization of 2048-dim expert embeddings; per-expert in-distribution scatter (Real vs Synthetic) and cross-expert scatter (SD35 expert on all 5 variants, 6 classes); produces `results/t11/umap_experts_grid.png`, `umap_cross_expert.png`
+- `results/analysis.ipynb`: full evaluation narrative — aggregates all Phase 4 plots with quantitative tables and key findings
 
 ### Results — Phase 4 (test set, 100 pairs × 5 patches per variant)
 
