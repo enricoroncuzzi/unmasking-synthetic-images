@@ -1,6 +1,15 @@
+[![HF Space](https://img.shields.io/badge/🤗-Live%20Demo-yellow)](https://huggingface.co/spaces/enricoroncuzzi/unmasking-synthetic-images-demo)
+[![CI](https://github.com/enricoroncuzzi/unmasking-synthetic-images/actions/workflows/ci.yml/badge.svg)](https://github.com/enricoroncuzzi/unmasking-synthetic-images/actions/workflows/ci.yml)
+
 # Unmasking Synthetic Images
 
 > Mixture of Experts framework for forensic detection and attribution of AI-generated images across 5 Stable Diffusion variants.
+
+## Try it live
+
+Upload any image at the [HuggingFace Space](https://huggingface.co/spaces/enricoroncuzzi/unmasking-synthetic-images-demo) — no setup required.
+
+---
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c)
@@ -107,6 +116,43 @@ Each expert learns a well-separated 2D embedding space for its own variant (Real
 
 ---
 
+## Run locally with Docker
+
+```bash
+docker compose up --build
+```
+
+- Gradio UI: http://localhost:7860
+- API docs:  http://localhost:8000/docs
+
+On first start the model checkpoints (~1.9 GB) are downloaded and cached in a Docker volume — subsequent starts are instant.
+
+---
+
+## REST API
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Predict
+curl -X POST http://localhost:8000/predict \
+  -F "file=@your_image.jpg"
+```
+
+Response:
+
+```json
+{
+  "prediction": "synthetic",
+  "confidence": 0.97,
+  "alpha_weights": {"sd15": 0.02, "sd21": 0.01, "sdxlbase": 0.03, "sd35": 0.08, "flux": 0.86},
+  "attributed_source": "flux"
+}
+```
+
+---
+
 ## Dataset
 
 **6000 images** — 1000 real (OpenImages) + 1000 per SD variant, generated via img2img at `strength=0.05` (VAE roundtrip + minimal denoising, visually identical to the original, forensic fingerprint intact).
@@ -146,8 +192,13 @@ training/        Lightning training scripts — train_expert.py, train_moe.py
 evaluation/      evaluate_expert.py, evaluate_moe.py, gradcam.py, umap_viz.py
 configs/         Hydra configs — expert × 5, moe × 4
 results/         analysis.ipynb + evaluation plots per run (t8–t11)
-scripts/         train_all_experts.sh, train_all_moe.sh
-checkpoints/     experts/ + moe/ — best checkpoints per variant/strategy
+scripts/         train_all_experts.sh, train_all_moe.sh, profiling.py
+checkpoints/     experts/ + moe/ — best checkpoints per variant/strategy (gitignored)
+demo/            app.py (Gradio), api.py (FastAPI), pipeline.py, examples/
+tests/           offline pytest suite with fake checkpoint fixture
+.github/         CI workflow — lint (ruff) → test (pytest) → docker build
+Dockerfile       two-stage build (builder + runtime)
+docker-compose.yml  gradio + api services with shared HF cache volume
 ```
 
 Pretrained checkpoints: [enricoroncuzzi/unmasking-synthetic-images-models](https://huggingface.co/enricoroncuzzi/unmasking-synthetic-images-models)
@@ -195,5 +246,5 @@ Expert checkpoints are resolved via glob patterns (`checkpoints/experts/<name>/b
 - [x] Phase 2 — ResNet50 expert training (AUC 0.985–1.000 in-distribution)
 - [x] Phase 3 — Mixture of Experts with 4 gating strategies (ablation study)
 - [x] Phase 4 — Evaluation suite: ROC curves, Grad-CAM, UMAP, attribution analysis
-- [ ] Phase 5 — Gradio demo on HuggingFace Spaces
-- [ ] Phase 6 — Docker, pytest, packaging
+- [x] Phase 5 — Gradio demo, FastAPI, Docker, CI, HuggingFace Spaces
+- [ ] Phase 6 — Packaging (pyproject.toml), dtype bf16 fix

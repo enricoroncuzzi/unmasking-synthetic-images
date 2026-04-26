@@ -58,7 +58,12 @@ def _list_hf_files(repo_id: str) -> list:
     return list(list_repo_files(repo_id))
 
 
-def _hf_resolve_and_download(repo_id: str, pattern: str, all_files: list) -> str:
+def _hf_resolve_and_download(
+    repo_id: str,
+    pattern: str,
+    all_files: list,
+    local_dir: Optional[str] = None,
+) -> str:
     """
     Finds a single file in an HF repo matching a glob pattern and downloads it.
 
@@ -66,9 +71,13 @@ def _hf_resolve_and_download(repo_id: str, pattern: str, all_files: list) -> str
         repo_id   : HuggingFace repo ID
         pattern   : glob pattern relative to repo root, e.g. "experts/sd15/best-*.ckpt"
         all_files : pre-fetched list of all repo files (avoid repeated API calls)
+        local_dir : if set, download into this directory mirroring the repo sub-path.
+                    Pass /data/checkpoints so the file lands at
+                    /data/checkpoints/experts/<name>/best-*.ckpt and is found as a
+                    local file on every subsequent cold start — zero network calls.
 
     Returns:
-        Local cache path (from huggingface_hub.hf_hub_download)
+        Local path to the downloaded file
 
     Raises:
         FileNotFoundError if no match
@@ -85,7 +94,8 @@ def _hf_resolve_and_download(repo_id: str, pattern: str, all_files: list) -> str
         raise RuntimeError(
             f"Ambiguous pattern '{pattern}' matched {len(matches)} files in {repo_id}: {matches}"
         )
-    return hf_hub_download(repo_id, matches[0])
+    kwargs = {"local_dir": local_dir} if local_dir else {}
+    return hf_hub_download(repo_id, matches[0], **kwargs)
 
 
 # ── Checkpoint resolution ──────────────────────────────────────────────────────
@@ -97,8 +107,14 @@ def _resolve_checkpoint_paths(
     """
     Builds expert_ckpt_paths and moe_ckpt_paths dicts.
 
-    Local mode: uses glob patterns like checkpoints/experts/sd15/best-*.ckpt
-    HF Hub mode: downloads each file and returns local cache paths.
+    Candidate directories are checked in priority order:
+      1. Explicitly passed checkpoints_dir
+      2. /data/checkpoints  — HF Space persistent storage bucket (zero-download restarts)
+      3. <repo_root>/checkpoints — local dev
+
+    If none of the candidates exist, downloads from HF Hub and saves directly to
+    /data/checkpoints (when /data is mounted) so all subsequent cold starts are
+    fully offline.
 
     Args:
         checkpoints_dir : path to local checkpoints/ root, or None
@@ -107,10 +123,16 @@ def _resolve_checkpoint_paths(
     Returns:
         (expert_ckpt_paths, moe_ckpt_paths) — both dicts map name → path string
     """
-    local_dir = checkpoints_dir or str(_REPO_ROOT / "checkpoints")
-    use_local = os.path.isdir(local_dir)
+    candidates = []
+    if checkpoints_dir:
+        candidates.append(checkpoints_dir)
+    candidates.append("/data/checkpoints")
+    candidates.append(str(_REPO_ROOT / "checkpoints"))
 
-    if use_local:
+    local_dir = next((d for d in candidates if os.path.isdir(d)), None)
+
+    if local_dir:
+        print(f"Loading checkpoints from {local_dir} ...")
         expert_paths = {
             name: os.path.join(local_dir, "experts", name, "best-*.ckpt")
             for name in EXPERT_NAMES
@@ -121,15 +143,21 @@ def _resolve_checkpoint_paths(
         }
         return expert_paths, moe_paths
 
-    # HF Hub: fetch file listing once, then download each checkpoint
+    # No local checkpoints found — download from HF Hub.
+    # Save to /data/checkpoints when the persistent storage bucket is mounted so
+    # every subsequent restart reads directly from disk with no network calls.
+    download_dir = "/data/checkpoints" if Path("/data").exists() else None
     print(f"Downloading checkpoints from {HF_REPO_ID} ...")
+    if download_dir:
+        print(f"  Saving to {download_dir} — future restarts will be fully offline.")
     all_files = _list_hf_files(HF_REPO_ID)
 
     expert_paths: Dict[str, str] = {}
     for name in EXPERT_NAMES:
         print(f"  Expert [{name}] ...", end=" ", flush=True)
         expert_paths[name] = _hf_resolve_and_download(
-            HF_REPO_ID, f"experts/{name}/best-*.ckpt", all_files
+            HF_REPO_ID, f"experts/{name}/best-*.ckpt", all_files,
+            local_dir=download_dir,
         )
         print("OK")
 
@@ -137,7 +165,8 @@ def _resolve_checkpoint_paths(
     for strategy in strategies:
         print(f"  MoE [{strategy}] ...", end=" ", flush=True)
         moe_paths[strategy] = _hf_resolve_and_download(
-            HF_REPO_ID, f"moe/{strategy}/best-*.ckpt", all_files
+            HF_REPO_ID, f"moe/{strategy}/best-*.ckpt", all_files,
+            local_dir=download_dir,
         )
         print("OK")
 
@@ -206,7 +235,7 @@ class MoEPipeline:
     Encapsulates the full MoE inference pipeline for single-image demo use.
 
     Loads 5 frozen expert ResNet50 checkpoints and a trained gating network.
-    Experts are loaded once and reused across calls. 
+    Experts are loaded once and reused across calls.
     Supports predict() for classification + attribution, and gradcam() for visual explanation.
 
     Args:

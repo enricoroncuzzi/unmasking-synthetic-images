@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.0] - 2026-04-26
+
+### Added
+- HuggingFace Space demo live at `enricoroncuzzi/unmasking-synthetic-images-demo`
+- `demo/pipeline.py` — `MoEPipeline` shared inference class (HF Hub + local fallback, persistent `/data` cache)
+- `demo/app.py` — Gradio UI with dark theme, alpha bar chart, Grad-CAM overlay, example gallery
+- `demo/api.py` — FastAPI REST API (`/health`, `/predict`) with Pydantic response model and lifespan context manager
+- `Dockerfile` — true two-stage build (builder + runtime), final image ~1.2 GB
+- `docker-compose.yml` — two services (gradio + api) sharing a named HF cache volume
+- `tests/test_pipeline.py` — offline pytest suite with fake checkpoint fixture
+- `.github/workflows/ci.yml` — CI pipeline: lint (ruff) → test (pytest) → docker build
+- `pyproject.toml` — ruff config scoped to `demo/` and `tests/`
+
 ## [0.1.0] - 2026-03-09
 
 ### Added

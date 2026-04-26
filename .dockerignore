@@ -1,0 +1,15 @@
+.git
+.venv
+__pycache__
+*.pyc
+dataset/
+checkpoints/
+manifests/
+logs/
+outputs/
+experiments/
+results/
+obsidian/
+.claude/
+*.ckpt
+.DS_Store
