@@ -118,18 +118,19 @@ _STRATEGY = "logit"
 
 _EXAMPLES_DIR = _DEMO_DIR / "examples"
 
-_TITLE = "Synthetic Image Forensics — MoE Attribution System"
+_TITLE = "Unmasking Synthetic Images"
 
 _DESCRIPTION = """
-Determine whether an image was synthesised by a generative model and trace it back to the originating architecture.
+Drop any image and get a verdict: **real or AI-generated**, and if synthetic, which model made it.
 
-**Method:** five ResNet50 experts — each specialised on a distinct diffusion generator — feed into a
-Mixture-of-Experts gating network. The gating weights *α* function as a forensic fingerprint:
-high activation on expert *E* signals that the image carries artefacts characteristic of that generator's pipeline.
+Five ResNet50 detectors, each trained on a different Stable Diffusion variant, vote through a learned gating network. The bar chart shows which generator's fingerprint dominated. The heatmap shows where in the image the model looked.
 
-**Phase 4 evaluation:** MoE-Logit achieves **94.1% Balanced Accuracy** on the held-out test set.
+**94.1% balanced accuracy** across SD 1.5 · SD 2.1 · SDXL · SD 3.5 · FLUX on the held-out test set.
 
-[GitHub](https://github.com/enricoroncuzzi/unmasking-synthetic-images) · [Model weights](https://huggingface.co/enricoroncuzzi/unmasking-synthetic-images-models)
+For more information check my [GitHub](https://github.com/enricoroncuzzi/unmasking-synthetic-images)
+
+For the full story follow the [Medium series](https://medium.com/@enricoroncuzzi/list/unmasking-synthetic-images-moe-detection-and-attribution-4c63d2f4f4d0)
+
 """
 
 # ── Pipeline preload ───────────────────────────────────────────────────────────

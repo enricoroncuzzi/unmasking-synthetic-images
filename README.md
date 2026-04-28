@@ -207,8 +207,7 @@ Pretrained checkpoints: [enricoroncuzzi/unmasking-synthetic-images-models](https
 
 ## Medium Articles
 
-- [Part 1 — Building a Forensic AI Dataset Across 5 Stable Diffusion Variants](https://medium.com/@enricoroncuzzi/part-1-building-a-forensic-ai-dataset-across-5-stable-diffusion-variants-sd1-5-to-flux-dfd39f5b50d1)
-- [Part 2 — Training Five Specialized Detectors on a Forensic Image Dataset](https://medium.com/@enricoroncuzzi/phase-2-training-five-specialized-detectors-on-a-forensic-image-dataset-267f59841940)
+Full series: [Unmasking Synthetic Images — MoE Detection and Attribution](https://medium.com/@enricoroncuzzi/list/unmasking-synthetic-images-moe-detection-and-attribution-4c63d2f4f4d0)
 
 ---
 

@@ -177,7 +177,10 @@ def device() -> str:
     return "cuda" if torch.cuda.is_available() else "cpu"
 
 def dtype():
-    return torch.float16 if torch.cuda.is_available() else torch.float32
+    if not torch.cuda.is_available():
+        return torch.float32
+    major, _ = torch.cuda.get_device_capability()
+    return torch.bfloat16 if major >= 8 else torch.float16
 
 def load_mappings() -> dict:
     if MAPPING_PATH.exists():
