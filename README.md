@@ -236,14 +236,3 @@ python evaluation/umap_viz.py
 ```
 
 Expert checkpoints are resolved via glob patterns (`checkpoints/experts/<name>/best-*.ckpt`) — filename changes between runs are handled automatically. Pretrained weights available on HuggingFace if you want to skip training.
-
----
-
-## Roadmap
-
-- [x] Phase 1 — Forensic dataset generation (6000 images, 5 SD variants, HuggingFace)
-- [x] Phase 2 — ResNet50 expert training (AUC 0.985–1.000 in-distribution)
-- [x] Phase 3 — Mixture of Experts with 4 gating strategies (ablation study)
-- [x] Phase 4 — Evaluation suite: ROC curves, Grad-CAM, UMAP, attribution analysis
-- [x] Phase 5 — Gradio demo, FastAPI, Docker, CI, HuggingFace Spaces
-- [ ] Phase 6 — Packaging (pyproject.toml), dtype bf16 fix
