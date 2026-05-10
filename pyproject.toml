@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name = "unmasking-synthetic-images"
-version = "0.5.0"
+version = "0.6.0"
 description = "Mixture of Experts framework for forensic detection and attribution of AI-generated images"
 readme = "README.md"
 license = { text = "MIT" }
@@ -19,7 +19,7 @@ classifiers = [
 [tool.ruff]
 line-length = 100
 target-version = "py310"
-extend-exclude = ["training", "evaluation", "data", "models", "scripts", "experiments", "profiling.py"]
+extend-exclude = ["training", "evaluation", "data", "models", "scripts", "experiments"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]

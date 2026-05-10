@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.0] - 2026-04-28
+
+### Added
+- `pyproject.toml`: project metadata block (name, version, description, license, classifiers) for packaging
+
+### Changed
+- `data/generate_dataset.py` (`dtype()`): selects `bfloat16` on Ampere+ GPUs (compute capability ≥ 8), `float16` on older CUDA, `float32` on CPU — fixes overflow issues observed with fp16 on newer hardware
+- `demo/app.py`: rewrote title and description for a recruiter-facing demo (Gradio Space); added GitHub and Medium links
+- `README.md`: minor polish
+
 ## [0.5.0] - 2026-04-26
 
 ### Added
