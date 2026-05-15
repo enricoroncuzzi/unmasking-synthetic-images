@@ -61,7 +61,7 @@ Input image (3×256×256)
 | **Logit** | Expert logits (5×2) | ~1K | **0.986** | 94.1% |
 | **Embedding** | Expert embeddings (5×2048) | ~10.5M | 0.985 | **95.2%** |
 | Image | Raw input patch | ~20K | 0.913 | 77.1% |
-| Attention | Expert logit tokens (5×2) | ~300 | 0.891 | 74.2% |
+| Attention | Expert logit tokens (5×2) | ~40 | 0.891 | 74.2% |
 
 All experts run concurrently on separate CUDA streams. Only the gating network is trained (Phase 3). Expert weights are permanently frozen after Phase 2.
 

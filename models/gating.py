@@ -59,7 +59,7 @@ class LogitGating(nn.Module):
     Rationale: simplest possible gating — uses only the final binary
     confidence of each expert. Fast and interpretable; the gating
     learns linear and non-linear combinations of expert decisions.
-    ~965 trainable parameters.
+    ~1.0K trainable parameters (1,029 exact).
     """
 
     def __init__(self, num_experts: int = 5):
@@ -110,7 +110,8 @@ class EmbeddingGating(nn.Module):
     representations from each expert. The progressive compression
     (10240 → 1024 → 256 → 5) avoids information bottlenecks.
     BatchNorm at input stabilises training given scale differences
-    between expert embedding distributions. ~10.5M trainable parameters.
+    between expert embedding distributions. ~10.8M trainable parameters
+    (10,775,047 exact).
     """
 
     def __init__(self, num_experts: int = 5, embedding_dim: int = 2048):
@@ -173,8 +174,8 @@ class ImageGating(nn.Module):
     Rationale: routing decision is independent of expert outputs —
     the gating network inspects the image directly and decides
     which expert to trust before seeing any expert prediction.
-    Lightweight (~20k params); tends toward a dominant expert
-    (good for detection, limits attribution sensitivity).
+    Lightweight (~22K params, 21,637 exact); tends toward a dominant
+    expert (good for detection, limits attribution sensitivity).
     """
 
     def __init__(self, num_experts: int = 5):
@@ -237,9 +238,9 @@ class AttentionGating(nn.Module):
 
     Rationale: standard logit-based gating treats each expert independently.
     Self-attention captures inter-expert agreement/disagreement as a
-    routing signal. ~300 trainable parameters — deliberately minimal
-    so that the attention mechanism itself carries the inductive bias,
-    not a large MLP. Novel contribution relative to the thesis.
+    routing signal. ~40 trainable parameters (39 exact) — deliberately
+    minimal so that the attention mechanism itself carries the inductive
+    bias, not a large MLP. Novel contribution relative to the thesis.
 
     Note on dimensionality: d_model=2 is very low. If training is
     unstable, the fallback is to project tokens to a higher dim
