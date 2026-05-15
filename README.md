@@ -5,6 +5,8 @@
 
 > Mixture of Experts framework for forensic detection and attribution of AI-generated images across 5 Stable Diffusion variants.
 
+[![Live demo — predicts an image as synthetic and attributes it to Stable Diffusion 1.5](assets/usi_readme.png)](https://huggingface.co/spaces/enricoroncuzzi/unmasking-synthetic-images-demo)
+
 ## Try it live
 
 Upload any image at the [HuggingFace Space](https://huggingface.co/spaces/enricoroncuzzi/unmasking-synthetic-images-demo) — no setup required.
@@ -22,9 +24,13 @@ Upload any image at the [HuggingFace Space](https://huggingface.co/spaces/enrico
 
 ## Problem
 
-AI-generated images leave statistical fingerprints in their pixel structure. A detector trained on one generative model (e.g. SD 1.5) fails completely when tested on another (e.g. FLUX) — cross-distribution balanced accuracy drops to ~50%, equivalent to a random classifier.
+Drop in any image and find out whether it's real or AI-generated — and if it's fake, which model made it.
 
-This project builds a **Mixture of Experts** system that solves this: 5 specialized ResNet50 detectors, each expert in one SD variant, combined by a trainable gating network that routes each input to the right specialist. The result is a system that generalizes across all 5 variants simultaneously, recovering the ~45 percentage-point accuracy gap that single experts cannot bridge.
+Every generative model leaves a different statistical fingerprint in its pixel output, so a detector trained on Stable Diffusion 1.5 falls apart the moment you show it FLUX. Cross-distribution balanced accuracy drops to around 50%. Basically a coin flip.
+
+A Mixture of Experts solves this. Five ResNet50 detectors, each specialized in a single Stable Diffusion variant, plus a small gating network that learns to route every input to the right specialist. Together they hit 94.1% balanced accuracy across SD 1.5, SD 2.1, SDXL, SD 3.5 and FLUX, about 45 points more than any single expert can manage on its own.
+
+In the demo, the bar chart tells you which generator's fingerprint dominated, and the Grad-CAM heatmap shows where the chosen expert was looking when it made the call.
 
 ---
 
