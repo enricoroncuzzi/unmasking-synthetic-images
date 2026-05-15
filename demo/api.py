@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Unmasking Synthetic Images API",
     description="Forensic MoE system for AI-generated image detection and attribution.",
-    version="0.5.0",
+    version="0.6.0",
     lifespan=lifespan,
 )
 

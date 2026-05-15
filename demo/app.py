@@ -32,13 +32,13 @@ _REPO_ROOT = _DEMO_DIR.parent
 sys.path.insert(0, str(_REPO_ROOT))
 sys.path.insert(0, str(_DEMO_DIR))
 
-import gradio as gr  # noqa: E402
-import matplotlib  # noqa: E402
+import gradio as gr
+import matplotlib
 
 matplotlib.use("Agg")  # non-interactive backend, required in server environments
-import matplotlib.pyplot as plt  # noqa: E402, I001
+import matplotlib.pyplot as plt
 
-from pipeline import MoEPipeline  # noqa: E402
+from pipeline import MoEPipeline
 
 # ── Theme & CSS ────────────────────────────────────────────────────────────────
 
@@ -121,11 +121,12 @@ _EXAMPLES_DIR = _DEMO_DIR / "examples"
 _TITLE = "Unmasking Synthetic Images"
 
 _DESCRIPTION = """
-Drop any image and get a verdict: **real or AI-generated**, and if synthetic, which model made it.
+Drop in any image and find out whether it's real or AI-generated — and if it's fake, which model made it.
 
-Five ResNet50 detectors, each trained on a different Stable Diffusion variant, vote through a learned gating network. The bar chart shows which generator's fingerprint dominated. The heatmap shows where in the image the model looked.
+Five ResNet50 detectors, one trained per Stable Diffusion variant (SD 1.5, SD 2.1, SDXL, SD 3.5, FLUX), feed into a small gating network that picks the right one for each image. The bar
+chart shows which generator's fingerprint dominated. The heatmap shows where the expert was looking.
 
-**94.1% balanced accuracy** across SD 1.5 · SD 2.1 · SDXL · SD 3.5 · FLUX on the held-out test set.
+94.1% balanced accuracy on the held-out test set.
 
 For more information check my [GitHub](https://github.com/enricoroncuzzi/unmasking-synthetic-images)
 
@@ -294,4 +295,4 @@ def build_demo() -> gr.Blocks:
 demo = build_demo()
 
 if __name__ == "__main__":
-    demo.launch(share=True)
+    demo.launch()

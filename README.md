@@ -17,7 +17,6 @@ Upload any image at the [HuggingFace Space](https://huggingface.co/spaces/enrico
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c)
 ![Lightning](https://img.shields.io/badge/Lightning-2.0+-792ee5)
 ![License](https://img.shields.io/badge/License-MIT-green)
-[![Dataset](https://img.shields.io/badge/HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/enricoroncuzzi/unmasking-synthetic-images-dataset)
 [![Models](https://img.shields.io/badge/HuggingFace-Models-yellow)](https://huggingface.co/enricoroncuzzi/unmasking-synthetic-images-models)
 
 ---
@@ -59,8 +58,8 @@ Input image (3×256×256)
 | Strategy | Input | Trainable Params | Test AUC | Test BA |
 |---|---|---|---|---|
 | **Logit** | Expert logits (5×2) | ~1K | **0.986** | 94.1% |
-| **Embedding** | Expert embeddings (5×2048) | ~10.5M | 0.985 | **95.2%** |
-| Image | Raw input patch | ~20K | 0.913 | 77.1% |
+| **Embedding** | Expert embeddings (5×2048) | ~10.8M | 0.985 | **95.2%** |
+| Image | Raw input patch | ~22K | 0.913 | 77.1% |
 | Attention | Expert logit tokens (5×2) | ~40 | 0.891 | 74.2% |
 
 All experts run concurrently on separate CUDA streams. Only the gating network is trained (Phase 3). Expert weights are permanently frozen after Phase 2.
@@ -74,18 +73,18 @@ All experts run concurrently on separate CUDA streams. Only the gating network i
 | Expert | In-Dist AUC | In-Dist BA | Cross-Dist BA (avg) |
 |---|---|---|---|
 | ResNet50-SD15 | 1.000 | 99.8% | ~50% |
-| ResNet50-SD21 | 0.999 | 98.0% | ~50% |
+| ResNet50-SD21 | 0.999 | 98.0% | ~58% |
 | ResNet50-SDXL | 0.987 | 93.9% | ~61% |
-| ResNet50-SD35 | 0.985 | 92.2% | ~69% |
+| ResNet50-SD35 | 0.985 | 92.2% | ~72% |
 | ResNet50-FLUX | 1.000 | 99.3% | ~50% |
 
-Every expert is near-perfect on its own variant, near-random on all others. SD3.5 is the most generalizing expert — its hybrid architecture captures artifacts that partially transfer across variants. This specialization is the core motivation for the MoE approach.
+SD1.5 and FLUX are highly specialized: near-perfect on their own variant, near-random on the others. SDXL and SD2.1 transfer partially. SD3.5 is the most generalizing expert, with cross-distribution BA in the 60s–80s — its hybrid architecture captures artifacts that carry across variants. Either way, no single expert solves the cross-distribution problem on its own, which is what motivates the MoE approach.
 
 ### MoE vs individual experts — the generalization gap
 
 ![Balanced Accuracy: Individual Experts vs MoE Strategies](results/t9/ba_comparison.png)
 
-Individual experts average ~50–69% balanced accuracy outside their training distribution. All four MoE strategies exceed 90% BA on the same cross-distribution scenario — a **~40 percentage-point recovery** from the specialization failure.
+Individual experts average 50–72% balanced accuracy outside their training distribution. The two best MoE strategies (Logit and Embedding) push that to 94–95% on the same cross-distribution scenario — a **~45 percentage-point recovery** from the worst-case specialization failure. The Image and Attention strategies trail at 77% and 74%, as the strategies table below shows.
 
 ### MoE strategies — full test set metrics
 
@@ -96,13 +95,13 @@ Individual experts average ~50–69% balanced accuracy outside their training di
 | MoE-Image | 0.913 | 77.1% | 0.952 | 0.572 | 0.714 |
 | MoE-Attention | 0.891 | 74.2% | 0.923 | 0.528 | 0.672 |
 
-**MoE-Logit** achieves near-identical detection to MoE-Embedding (~1K vs ~10.5M parameters) and is the only strategy that also produces correct **attribution**: the gating assigns the highest alpha weight to the specialist expert that matches each input's generative source.
+**MoE-Logit** achieves near-identical detection to MoE-Embedding (~1K vs ~10.8M parameters) and is the only strategy that also produces correct **attribution**: the gating assigns the highest alpha weight to the specialist expert that matches each input's generative source.
 
 ### Attribution — gating weight analysis
 
 ![Alpha Attribution Heatmaps](results/t9/alpha_heatmap.png)
 
-MoE-Logit (leftmost) shows a clear diagonal: SD1.5 inputs route to the SD1.5 expert, SD2.1 to the SD2.1 expert, and so on. MoE-Embedding collapses to a two-expert routing strategy, trading attribution for +1% BA. Image and Attention strategies converge to the single most generalizing expert (SD3.5) regardless of input source.
+MoE-Logit (leftmost) shows a clear diagonal: SD1.5 inputs route to the SD1.5 expert, SD2.1 to the SD2.1 expert, and so on. MoE-Embedding loses the diagonal — it routes most inputs to the SD1.5 expert, with the SD2.1 expert preserved as the only in-distribution match — trading attribution for +1% BA. Image and Attention strategies converge to the single most generalizing expert (SD3.5) regardless of input source.
 
 ---
 
@@ -118,7 +117,11 @@ Grad-CAM activations on `layer4[-1]` of each ResNet50 expert (target class: synt
 
 ![UMAP Expert Embeddings](results/t11/umap_experts_grid.png)
 
-Each expert learns a well-separated 2D embedding space for its own variant (Real vs Synthetic clusters). When the most generalizing expert (SD3.5) is run on all 5 SD variants simultaneously, the six classes form a single mixed manifold — the expert can detect real vs synthetic, but cannot separate generative sources. This geometric confirmation explains why attribution requires the MoE routing mechanism.
+Each expert learns a well-separated 2D embedding space for its own variant (Real vs Synthetic clusters).
+
+![UMAP — SD3.5 expert on all 5 SD variants](results/t11/umap_cross_expert.png)
+
+When the most generalizing expert (SD3.5) is run on all 5 SD variants simultaneously, the six classes form a single mixed manifold — the expert can detect real vs synthetic, but cannot separate generative sources. This geometric confirmation explains why attribution requires the MoE routing mechanism.
 
 ---
 
@@ -146,7 +149,13 @@ curl -X POST http://localhost:8000/predict \
   -F "file=@your_image.jpg"
 ```
 
-Response:
+`/health` response:
+
+```json
+{"status": "healthy", "model_loaded": true, "strategy": "logit"}
+```
+
+`/predict` response:
 
 ```json
 {
@@ -157,21 +166,23 @@ Response:
 }
 ```
 
+`/predict` accepts JPEG and PNG only (other formats return HTTP 400), max 10 MB per upload (larger returns HTTP 413). When the prediction is `"real"`, `attributed_source` is `null`.
+
 ---
 
 ## Dataset
 
-**6000 images** — 1000 real (OpenImages) + 1000 per SD variant, generated via img2img at `strength=0.05` (VAE roundtrip + minimal denoising, visually identical to the original, forensic fingerprint intact).
+**6000 images** — 1000 real + 1000 per SD variant, generated via img2img at `strength=0.05` (VAE roundtrip + minimal denoising, visually identical to the original, forensic fingerprint intact).
 
 | Variant | Resolution | Generator |
 |---|---|---|
 | SD 1.5 | 512px | `runwayml/stable-diffusion-v1-5` |
-| SD 2.1 | 768px | `stabilityai/stable-diffusion-2-1` |
+| SD 2.1 | 768px | `Manojb/stable-diffusion-2-1-base` |
 | SDXL Base | 1024px | `stabilityai/stable-diffusion-xl-base-1.0` |
 | SD 3.5 Medium | 512px | `stabilityai/stable-diffusion-3.5-medium` |
 | FLUX.1-schnell | 768px | `black-forest-labs/FLUX.1-schnell` |
 
-Available on HuggingFace: [enricoroncuzzi/unmasking-synthetic-images-dataset](https://huggingface.co/datasets/enricoroncuzzi/unmasking-synthetic-images-dataset)
+Dataset hosted privately. Contact for access.
 
 ---
 
@@ -184,15 +195,18 @@ Available on HuggingFace: [enricoroncuzzi/unmasking-synthetic-images-dataset](ht
 | Experiment Tracking | MLflow |
 | Config Management | Hydra |
 | Visualization | matplotlib, seaborn, UMAP |
-| Data | HuggingFace Datasets, diffusers |
-| Cloud | RunPod A40 48GB (dataset generation), Kaggle T4 (evaluation) |
+| Data | HuggingFace Hub, diffusers |
+| Cloud | RunPod (multi-GPU - final results on RTX PRO 6000 Blackwell) |
+| Demo | Gradio (UI), FastAPI (REST API) |
+| Deployment | Docker, docker-compose |
+| CI/CD | GitHub Actions |
 
 ---
 
 ## Project Structure
 
 ```
-data/            dataset pipeline, manifests, Albumentations transforms
+data/            dataset pipeline, manifest generation, Albumentations transforms
 models/          ExpertModel (ResNet50), MoEModel, 4 gating strategies
 training/        Lightning training scripts — train_expert.py, train_moe.py
 evaluation/      evaluate_expert.py, evaluate_moe.py, gradcam.py, umap_viz.py
@@ -219,26 +233,12 @@ Full series: [Unmasking Synthetic Images — MoE Detection and Attribution](http
 
 ## Reproduce
 
-```bash
-pip install -r requirements.txt
+Pretrained checkpoints are public on HuggingFace ([models repo](https://huggingface.co/enricoroncuzzi/unmasking-synthetic-images-models)) — the live demo and the Docker setup pull from there automatically.
 
-# Download dataset from HuggingFace
-python data/download_dataset.py --token YOUR_HF_TOKEN --workers 1
+Full reproduction requires access to the gated dataset. Training, evaluation, and visualization scripts are organized as:
 
-# Generate train/val/test manifests
-python data/prepare_manifests.py
+- `scripts/train_all_experts.sh` — Phase 2 expert training
+- `scripts/train_all_moe.sh` — Phase 3 MoE gating training
+- `evaluation/evaluate_expert.py`, `evaluate_moe.py`, `gradcam.py`, `umap_viz.py` — Phase 4 evaluation suite
 
-# Train all 5 experts sequentially
-bash scripts/train_all_experts.sh
-
-# Train all 4 MoE gating strategies (requires expert checkpoints)
-bash scripts/train_all_moe.sh
-
-# Run evaluation suite (Phase 4)
-python evaluation/evaluate_expert.py
-python evaluation/evaluate_moe.py
-python evaluation/gradcam.py
-python evaluation/umap_viz.py
-```
-
-Expert checkpoints are resolved via glob patterns (`checkpoints/experts/<name>/best-*.ckpt`) — filename changes between runs are handled automatically. Pretrained weights available on HuggingFace if you want to skip training.
+See `CHANGELOG.md` for per-phase reproduction details and reported results.
