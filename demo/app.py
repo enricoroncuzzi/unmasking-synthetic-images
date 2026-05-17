@@ -32,13 +32,12 @@ _REPO_ROOT = _DEMO_DIR.parent
 sys.path.insert(0, str(_REPO_ROOT))
 sys.path.insert(0, str(_DEMO_DIR))
 
-import gradio as gr
-import matplotlib
+import gradio as gr  # noqa: E402
+import matplotlib  # noqa: E402
 
 matplotlib.use("Agg")  # non-interactive backend, required in server environments
-import matplotlib.pyplot as plt
-
-from pipeline import MoEPipeline
+import matplotlib.pyplot as plt  # noqa: E402
+from pipeline import MoEPipeline  # noqa: E402
 
 # ── Theme & CSS ────────────────────────────────────────────────────────────────
 

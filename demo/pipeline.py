@@ -235,7 +235,7 @@ class MoEPipeline:
     Encapsulates the full MoE inference pipeline for single-image demo use.
 
     Loads 5 frozen expert ResNet50 checkpoints and a trained gating network.
-    Experts are loaded once and reused across calls. 
+    Experts are loaded once and reused across calls.
     Supports predict() for classification + attribution, and gradcam() for visual explanation.
 
     Args:
